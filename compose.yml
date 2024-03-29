@@ -1,0 +1,17 @@
+services:
+  camera-node:
+    build: ./camera_node
+    network_mode: host
+    ipc: host
+    tty: true
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./fastrtps-profile.xml:/tmp/fastrtps-profile.xml
+      - ./camera_node/src:/root/workspace/src
+    environment:
+      - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/tmp/fastrtps-profile.xml
+      - ROS_DOMAIN_ID=33
+      - ROS_LOCALHOST_ONLY=0
+    privileged: true
