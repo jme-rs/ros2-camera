@@ -39,20 +39,21 @@ class DisplayNode(Node):
     def _sub_camera_callback(self, image: Image):
         self.get_logger().info("Received: /camera")
         cv_image = self._cv_bridge.imgmsg_to_cv2(image)
-        for pair in self.POSE_PAIRS:
-            part_a = pair[0]
-            part_b = pair[1]
-            cv2.line(
-                cv_image,
-                (part_a[0], part_a[1]),
-                (part_b[0], part_b[1]),
-                (0, 255, 0),
-                2,
-            )
+        # for pair in self.POSE_PAIRS:
+        #     part_a = pair[0]
+        #     part_b = pair[1]
+        #     cv2.line(
+        #         cv_image,
+        #         (part_a[0], part_a[1]),
+        #         (part_b[0], part_b[1]),
+        #         (0, 255, 0),
+        #         2,
+        #     )
 
         cv2.imshow("Display Node", cv_image)
         cv2.waitKey(1)
 
     def _sub_pose_callback(self, pose: String):
         self.get_logger().info("Received: /pose")
+        print(pose.data)
         self._pose_buffer = pose.data
