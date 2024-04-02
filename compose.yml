@@ -1,11 +1,10 @@
 services:
-  camera-node:
+  camera_node:
     build: ./camera_node
     network_mode: host
     ipc: host
     tty: true
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - ./fastrtps-profile.xml:/tmp/fastrtps-profile.xml
       - ./camera_node/src:/root/workspace/src
     environment:
@@ -15,3 +14,26 @@ services:
       - ROS_DOMAIN_ID=33
       - ROS_LOCALHOST_ONLY=0
     privileged: true
+    # command: /bin/bash -c "colcon build --symlink-install \
+    #   && source ./install/local_setup.bash \
+    #   && ros2 run camera_node camera_node"
+    # command: /bin/bash -c "sudo python3 ./src/camera_test.py"
+
+  display_node:
+    build: ./display_node
+    network_mode: host
+    ipc: host
+    tty: true
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./fastrtps-profile.xml:/tmp/fastrtps-profile.xml
+      - ./display_node/src:/root/workspace/src
+    environment:
+      - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/tmp/fastrtps-profile.xml
+      - ROS_DOMAIN_ID=33
+      - ROS_LOCALHOST_ONLY=0
+    # command: /bin/bash -c "colcon build --symlink-install \
+    #   && source ./install/local_setup.bash \
+    #   && ros2 run display_node display_node"

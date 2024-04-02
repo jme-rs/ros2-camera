@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'camera_node'
+package_name = 'display_node'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'camera_node = camera_node.main:main',
+            'display_node = display_node.main:main',
         ],
     },
 )
