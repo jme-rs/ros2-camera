@@ -14,9 +14,9 @@ services:
       - ROS_DOMAIN_ID=33
       - ROS_LOCALHOST_ONLY=0
     privileged: true
-    # command: /bin/bash -c "colcon build --symlink-install \
-    #   && source ./install/local_setup.bash \
-    #   && ros2 run camera_node camera_node"
+    command: /bin/bash -c "colcon build --symlink-install \
+      && source ./install/local_setup.bash \
+      && ros2 run camera_node camera_node"
     # command: /bin/bash -c "sudo python3 ./src/camera_test.py"
 
   display_node:
@@ -34,6 +34,6 @@ services:
       - FASTRTPS_DEFAULT_PROFILES_FILE=/tmp/fastrtps-profile.xml
       - ROS_DOMAIN_ID=33
       - ROS_LOCALHOST_ONLY=0
-    # command: /bin/bash -c "colcon build --symlink-install \
-    #   && source ./install/local_setup.bash \
-    #   && ros2 run display_node display_node"
+    command: /bin/bash -c "colcon build --symlink-install \
+      && source ./install/local_setup.bash \
+      && ros2 run display_node display_node"
