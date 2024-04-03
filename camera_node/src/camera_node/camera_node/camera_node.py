@@ -13,10 +13,22 @@ class FrameNotAvailableError(Exception):
 
 
 class CameraNode(Node):
+    """
+    カメラの画像を取得し、指定したトピックに画像を配信するノード。
+    """
+
     def __init__(self,
                  capture: cv2.VideoCapture,
                  topic_name: str = '/camera',
                  publish_rate: float = 0.5):
+        """
+        ## Parameters
+
+        - `capture`: カメラのキャプチャオブジェクト。
+        - `topic_name`: 画像を配信するトピック名。
+        - `publish_rate`: 画像の配信レート。
+        """
+
         super().__init__('camera_node')
         self._capture   = capture
         self._camera_publisher = self.create_publisher(Image, topic_name, 10)
@@ -24,6 +36,11 @@ class CameraNode(Node):
         self._cv_bridge = CvBridge()
 
     def _timer_callback(self):
+        """
+        タイマーコールバック関数。
+        カメラから画像を取得し、指定したトピックに画像を配信する。
+        """
+
         # Read the frame
         has_frame, frame = self._capture.read()
 
