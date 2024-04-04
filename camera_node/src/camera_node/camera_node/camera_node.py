@@ -52,4 +52,4 @@ class CameraNode(Node):
         # Convert the frame and publish it
         image = self._cv_bridge.cv2_to_imgmsg(frame)
         self._camera_publisher.publish(image)
-        self.get_logger().info('Image published')
+        self.get_logger().info('Publish: /camera')

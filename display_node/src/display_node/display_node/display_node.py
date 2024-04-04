@@ -3,6 +3,7 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import String
 from cv_bridge import CvBridge
 import cv2
+import numpy as np
 
 
 class DisplayNode(Node):
@@ -51,7 +52,7 @@ class DisplayNode(Node):
         self._cv_bridge = CvBridge()
 
         """ポーズ情報をバッファリングするリスト"""
-        self._pose_buffer: list = None
+        self._pose_buffer = []
 
         """転倒判定の閾値"""
         self._fall_threshold = fall_threshold
@@ -78,41 +79,36 @@ class DisplayNode(Node):
         """
 
         self.get_logger().info("Received: /pose")
-        print(pose.data)
 
         # `/pose` トピックと `/camera` トピックの受信は非同期であるため、
         # バッファリングすることで参照できるようにする
-        self._pose_buffer = pose.data
-
+        self._pose_buffer = eval(pose.data)
     def _draw_pose(self, image):
         """画像にポーズを描画する。"""
 
-        # ポーズがバッファされていない場合は画像を変更せずに返す
-        if self._pose_buffer is None:
-            return
+        for person in self._pose_buffer:
+            for pair in self.POSE_PAIRS:
+                part_a_index = pair[0]
+                part_b_index = pair[1]
+                part_a_pos = person[part_a_index]
+                part_b_pos = person[part_b_index]
 
-        for pair in self.POSE_PAIRS:
-            part_a_index = pair[0]
-            part_b_index = pair[1]
-            part_a_pos = self._pose_buffer[part_a_index].split(",")
-            part_b_pos = self._pose_buffer[part_b_index].split(",")
+                part_a_pos = (int(part_a_pos[0]), int(part_a_pos[1]))
+                part_b_pos = (int(part_b_pos[0]), int(part_b_pos[1]))
 
-            part_a_pos = (int(part_a_pos[0]), int(part_a_pos[1]))
-            part_b_pos = (int(part_b_pos[0]), int(part_b_pos[1]))
+                # 座標が 0 に近い場合は描画しない
+                if (part_a_pos[0] == 0 and part_a_pos[1] == 0) or (
+                    part_b_pos[0] == 0 and part_b_pos[1] == 0
+                ):
+                    continue
 
-            # 座標が 0 に近い場合は描画しない
-            if (part_a_pos[0] == 0 and part_a_pos[1] == 0) or (
-                part_b_pos[0] == 0 and part_b_pos[1] == 0
-            ):
-                continue
-
-            cv2.line(
-                image,
-                part_a_pos,
-                part_b_pos,
-                (0, 255, 0),
-                2,
-            )
+                cv2.line(
+                    image,
+                    part_a_pos,
+                    part_b_pos,
+                    (0, 255, 0),
+                    2,
+                )
 
     def _put_text(self, image):
         """画像にテキストを描画する処理はここにまとめて記述する。"""
@@ -137,7 +133,7 @@ class DisplayNode(Node):
         複数人の場合は、一人でも転倒していれば True を返す。
         """
 
-        if keypoints is None:
+        if keypoints == []:
             return False
 
         threshold_height = self._fall_threshold * frame_height
